@@ -4,12 +4,51 @@ import { useRouter } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const SETTINGS_KEY = '@hiresight_settings';
 
 export default function SettingsScreen() {
   const router = useRouter();
   const [notifications, setNotifications] = useState(true);
   const [biometrics, setBiometrics] = useState(false);
+
+  // Load persisted settings on mount
+  useEffect(() => {
+    async function loadSettings() {
+      try {
+        const stored = await AsyncStorage.getItem(SETTINGS_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          setNotifications(parsed.notifications ?? true);
+          setBiometrics(parsed.biometrics ?? false);
+        }
+      } catch {}
+    }
+    loadSettings();
+  }, []);
+
+  // Persist whenever toggles change
+  const updateSetting = async (key: string, value: boolean) => {
+    try {
+      const stored = await AsyncStorage.getItem(SETTINGS_KEY);
+      const current = stored ? JSON.parse(stored) : {};
+      current[key] = value;
+      await AsyncStorage.setItem(SETTINGS_KEY, JSON.stringify(current));
+    } catch {}
+  };
+
+  const handleNotificationsToggle = (value: boolean) => {
+    setNotifications(value);
+    updateSetting('notifications', value);
+  };
+
+  const handleBiometricsToggle = (value: boolean) => {
+    setBiometrics(value);
+    updateSetting('biometrics', value);
+    // TODO: Phase 2 — Wire expo-local-authentication for biometric lock
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -32,7 +71,7 @@ export default function SettingsScreen() {
                 label="AI Notifications" 
                 description="Get alerts for JD matches & score dips"
                 value={notifications}
-                onValueChange={setNotifications}
+                onValueChange={handleNotificationsToggle}
             />
             
             <SettingItem 
@@ -40,10 +79,13 @@ export default function SettingsScreen() {
                 label="Biometric Security" 
                 description="Secure your Resume Vault"
                 value={biometrics}
-                onValueChange={setBiometrics}
+                onValueChange={handleBiometricsToggle}
             />
 
-            <TouchableOpacity className="bg-slate-900 p-5 rounded-[32px] border border-slate-800 flex-row items-center justify-between">
+            <TouchableOpacity 
+                onPress={() => router.push('/(candidate)/edit-profile')}
+                className="bg-slate-900 p-5 rounded-[32px] border border-slate-800 flex-row items-center justify-between"
+            >
                 <View className="flex-row items-center gap-4">
                     <View className="w-10 h-10 bg-blue-500/10 rounded-xl items-center justify-center">
                         <FontAwesome name="user-o" size={16} color="#3B82F6" />
@@ -69,6 +111,10 @@ export default function SettingsScreen() {
                 <Text className="text-slate-300 font-bold">Terms of Service</Text>
                 <FontAwesome name="external-link" size={12} color="#475569" />
             </TouchableOpacity>
+
+            <View className="p-5 border-t border-slate-800/10">
+                <Text className="text-slate-600 text-xs font-mono">HireSight v1.0.0 • Built with Groq AI</Text>
+            </View>
         </View>
 
         <TouchableOpacity 

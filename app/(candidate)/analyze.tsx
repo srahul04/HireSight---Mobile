@@ -182,6 +182,52 @@ export default function AnalyzeScreen() {
                   <Text className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-3 ml-1">Hiring Specialist Feedback</Text>
                   <Text className="text-slate-400 text-sm italic leading-5 px-1">{result.feedback}</Text>
                </View>
+
+               {/* Phase 3: Keyword Analysis Provision */}
+               <View className="mt-6 border-t border-slate-800/30 pt-6">
+                  <Text className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 ml-1">Semantic Keyword Analysis</Text>
+                  <View className="flex-row flex-wrap gap-2">
+                    <View className="bg-slate-800/50 px-3 py-1.5 rounded-lg border border-slate-700/50">
+                      <Text className="text-[10px] text-slate-400 font-bold italic">Provision: Keyword Gap Visualization coming soon</Text>
+                    </View>
+                  </View>
+               </View>
+
+               <View className="mt-10 space-y-3">
+                  <TouchableOpacity 
+                    onPress={async () => {
+                      const { data: { user } } = await supabase.auth.getUser();
+                      if (user && jobId) {
+                        const success = await LiveService.applyToJob(user.id, jobId as string, selectedResumeId!, result.score, { company, title: role, description: jd });
+                        if (success) Alert.alert('Success', 'Application successfully synced with recruiter portal!');
+                      } else {
+                        Alert.alert('Manual Action Required', 'Copy your tailored resume and apply via the company portal.');
+                      }
+                    }}
+                    className="bg-blue-600 h-14 rounded-2xl flex-row items-center justify-center"
+                  >
+                    <FontAwesome name="send" size={16} color="white" className="mr-3" />
+                    <Text className="text-white font-bold">Apply for Role</Text>
+                  </TouchableOpacity>
+
+                  <View className="flex-row gap-3">
+                    <TouchableOpacity 
+                      onPress={() => Alert.alert('Salary Intelligence', 'AI-powered salary estimation is being calibrated for this region.')}
+                      className="flex-1 bg-slate-800 h-14 rounded-2xl flex-row items-center justify-center"
+                    >
+                      <FontAwesome name="dollar" size={14} color="#94A3B8" className="mr-2" />
+                      <Text className="text-slate-300 font-bold text-xs">Salary Intel</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity 
+                      onPress={() => Alert.alert('JD Forge', 'Cover Letter generation provision is ready for Phase 3 integration.')}
+                      className="flex-1 bg-slate-800 h-14 rounded-2xl flex-row items-center justify-center"
+                    >
+                      <FontAwesome name="file-text-o" size={14} color="#94A3B8" className="mr-2" />
+                      <Text className="text-slate-300 font-bold text-xs">Forge Letter</Text>
+                    </TouchableOpacity>
+                  </View>
+               </View>
             </View>
           </View>
         </Animated.View>

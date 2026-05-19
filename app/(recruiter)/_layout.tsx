@@ -58,6 +58,8 @@ export default function RecruiterLayout() {
       {/* Utility Screens */}
       <Tabs.Screen name="jd-forge" options={{ href: null }} />
       <Tabs.Screen name="candidate-audit" options={{ href: null }} />
+      <Tabs.Screen name="post-job" options={{ href: null }} />
+      <Tabs.Screen name="pipeline" options={{ href: null }} />
     </Tabs>
   );
 }

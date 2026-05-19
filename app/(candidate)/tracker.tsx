@@ -59,10 +59,16 @@ export default function ApplicationTrackerScreen() {
                             <View className="flex-1 mr-4">
                                 <Text className="text-white font-bold text-lg mb-1">{app.company_name}</Text>
                                 <Text className="text-slate-500 text-xs mb-3">{app.role}</Text>
-                                <View className="flex-row items-center">
+                                <View className="flex-row items-center gap-3">
                                     <View className="px-3 py-1 rounded-full bg-slate-800 border border-slate-700">
                                         <Text className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{new Date(app.created_at).toLocaleDateString()}</Text>
                                     </View>
+                                    <TouchableOpacity 
+                                      onPress={() => Alert.alert('AI Deep Scan Insights', app.interview_tips || 'Semantic feedback is stored in your vault.')}
+                                      className="bg-blue-500/10 px-2 py-1 rounded-lg"
+                                    >
+                                      <Text className="text-[9px] text-blue-400 font-black uppercase">View Insights</Text>
+                                    </TouchableOpacity>
                                 </View>
                             </View>
                             

@@ -102,6 +102,16 @@ export default function CandidatesScreen() {
             filtered.map((item, index) => (
               <Animated.View key={item.id} entering={FadeInDown.delay(index * 100)} layout={Layout.springify()}>
                 <TouchableOpacity 
+                  onPress={() => router.push({
+                    pathname: '/(recruiter)/candidate-audit',
+                    params: { 
+                      name: item.name, 
+                      role: item.role, 
+                      score: item.score,
+                      // In a real app, we'd pass the actual resume text here
+                      resumeText: "Candidate resume content from storage..." 
+                    }
+                  })}
                   activeOpacity={0.8}
                   className="bg-slate-900/50 border border-slate-800 p-5 rounded-[32px] flex-row items-center justify-between"
                 >

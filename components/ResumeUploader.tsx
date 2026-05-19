@@ -89,8 +89,24 @@ export default function ResumeUploader({ onUploadComplete }: ResumeUploaderProps
             </View>
           )}
         </TouchableOpacity>
+
+        <View className="flex-row items-center my-4">
+          <View className="h-[1px] flex-1 bg-slate-800" />
+          <Text className="text-[10px] font-black text-slate-500 mx-4 uppercase tracking-widest">or</Text>
+          <View className="h-[1px] flex-1 bg-slate-800" />
+        </View>
+
+        <TouchableOpacity 
+          onPress={() => Alert.alert('Coming Soon', 'PDF/DOCX upload with AI parsing is currently being calibrated.')}
+          className="h-16 rounded-[24px] border border-slate-800 items-center justify-center bg-slate-900/30"
+        >
+          <View className="flex-row items-center">
+            <FontAwesome name="file-pdf-o" size={16} color="#64748B" />
+            <Text className="text-slate-400 font-bold ml-3 text-sm">Upload PDF / DOCX (Provision)</Text>
+          </View>
+        </TouchableOpacity>
         
-        <Text className="text-center text-slate-500 text-[10px] mt-2 italic">
+        <Text className="text-center text-slate-500 text-[10px] mt-4 italic">
           Tip: Ensure you include all sections including skills and experience for the best match score.
         </Text>
       </View>

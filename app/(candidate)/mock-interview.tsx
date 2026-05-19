@@ -45,6 +45,13 @@ export default function MockInterviewScreen() {
     setLoading(true);
     const report = await LiveService.getInterviewFeedback(messages);
     setFeedback(report);
+
+    // Persist session to Supabase
+    const { data: { user } } = await (await import('../../lib/supabase')).supabase.auth.getUser();
+    if (user && report) {
+      await LiveService.saveInterviewSession(user.id, messages, report);
+    }
+
     setSessionActive(false);
     setLoading(false);
   };

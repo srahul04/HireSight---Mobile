@@ -74,6 +74,7 @@ export default function CandidateLayout() {
       <Tabs.Screen name="latex-builder" options={{ href: null }} />
       <Tabs.Screen name="mock-interview" options={{ href: null }} />
       <Tabs.Screen name="linkedin" options={{ href: null }} />
+      <Tabs.Screen name="edit-profile" options={{ href: null }} />
     </Tabs>
   );
 }

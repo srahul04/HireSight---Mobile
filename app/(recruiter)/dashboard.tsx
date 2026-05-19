@@ -46,8 +46,19 @@ export default function RecruiterDashboard() {
             jobId: a.job_id
         })));
 
-        // Generate mock hiring velocity history (or real data if available)
-        setHistory([65, 78, 45, 90, 85, 95, 88]);
+        // Build real 7-day hiring velocity from actual application dates
+        const days: number[] = Array(7).fill(0);
+        liveActivity.forEach((a: any) => {
+          const created = new Date(a.created_at);
+          const now = new Date();
+          const diffDays = Math.floor((now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24));
+          if (diffDays >= 0 && diffDays < 7) {
+            days[6 - diffDays] = (days[6 - diffDays] || 0) + (a.ats_score || 50);
+          }
+        });
+        // Normalize to 0-100 range, default 10 if no data to avoid empty chart
+        const maxVal = Math.max(...days, 1);
+        setHistory(days.map(d => d > 0 ? Math.round((d / maxVal) * 95) : 10));
       }
       setLoading(false);
     }
@@ -119,7 +130,7 @@ export default function RecruiterDashboard() {
                 subtitle="Analyze hiring pipeline health" 
                 icon="gears" 
                 color="#64748B" 
-                onPress={() => Alert.alert('Coming Soon', 'Detailed pipeline analytics are under development.')}
+                onPress={() => router.push('/(recruiter)/pipeline')}
                 delay={1300}
             />
         </View>

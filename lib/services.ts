@@ -352,5 +352,208 @@ Return JSON:
     } catch (error) {
       return { roast: 'Analysis error.', gaps: [], recommendation: 'Manual Review Required' };
     }
-  }
+  },
+
+  // --- INTERVIEW SESSION PERSISTENCE ---
+  saveInterviewSession: async (userId: string, messages: any[], feedback: any, applicationId?: string) => {
+    try {
+      const { data, error } = await supabase.from('interview_sessions').insert({
+        user_id: userId,
+        application_id: applicationId || null,
+        messages: messages,
+        score: feedback?.score || 0,
+        feedback: feedback?.summary || '',
+        created_at: new Date().toISOString()
+      }).select().single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Failed to save interview session:', error);
+      return null;
+    }
+  },
+
+  getInterviewHistory: async (userId: string) => {
+    const { data } = await supabase
+      .from('interview_sessions')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(10);
+    return data || [];
+  },
+
+  // --- APPLICATION FLOW (Candidate ↔ Recruiter Connection) ---
+  applyToJob: async (userId: string, jobId: string, resumeId: string, atsScore: number, jobData: any) => {
+    try {
+      const { data, error } = await supabase.from('applications').insert({
+        user_id: userId,
+        job_id: jobId,
+        resume_id: resumeId,
+        company_name: jobData.company || 'Unknown',
+        role: jobData.title || 'Unknown',
+        job_description: jobData.description || '',
+        ats_score: atsScore,
+        status: 'applied',
+        applied_at: new Date().toISOString(),
+        created_at: new Date().toISOString()
+      }).select().single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Application submission error:', error);
+      return null;
+    }
+  },
+
+  updateApplicationStatus: async (applicationId: string, status: string) => {
+    const { error } = await supabase
+      .from('applications')
+      .update({ status })
+      .eq('id', applicationId);
+    return !error;
+  },
+
+  // --- COVER LETTER GENERATOR (Provision) ---
+  // TODO: Phase 3 — Uncomment and wire into analyze results screen
+  generateCoverLetter: async (resumeText: string, jdText: string, companyName: string) => {
+    try {
+      const completion = await groq.chat.completions.create({
+        messages: [
+          {
+            role: 'system',
+            content: `You are an elite Career Coach. Generate a professional, tailored cover letter.
+The letter should be 3 paragraphs: Hook (why this company), Value (what you bring), Close (call to action).
+Use data from the resume and JD to make it specific, not generic.
+
+Return JSON:
+{
+  "coverLetter": "string (the full formatted cover letter)",
+  "keyPoints": ["string", "string", "string"]
+}`
+          },
+          {
+            role: 'user',
+            content: `RESUME:\n${resumeText}\n\nJOB DESCRIPTION:\n${jdText}\n\nCOMPANY: ${companyName}`
+          }
+        ],
+        model: 'llama-3.3-70b-versatile',
+        response_format: { type: 'json_object' }
+      });
+
+      return JSON.parse(completion.choices[0].message.content || '{}');
+    } catch (error) {
+      console.error('Cover letter generation error:', error);
+      return { coverLetter: '', keyPoints: [] };
+    }
+  },
+
+  // --- SALARY INTELLIGENCE (Provision) ---
+  // TODO: Phase 3 — Wire into analyze results for salary insights
+  estimateSalary: async (jdText: string, location: string) => {
+    try {
+      const completion = await groq.chat.completions.create({
+        messages: [
+          {
+            role: 'system',
+            content: `You are a compensation analyst. Based on the JD and location, estimate salary ranges.
+
+Return JSON:
+{
+  "minSalary": number,
+  "maxSalary": number,
+  "median": number,
+  "currency": "USD",
+  "confidence": "high/medium/low",
+  "factors": ["string", "string"]
+}`
+          },
+          {
+            role: 'user',
+            content: `JOB DESCRIPTION:\n${jdText}\n\nLOCATION: ${location}`
+          }
+        ],
+        model: 'llama-3.3-70b-versatile',
+        response_format: { type: 'json_object' }
+      });
+
+      return JSON.parse(completion.choices[0].message.content || '{}');
+    } catch (error) {
+      console.error('Salary estimation error:', error);
+      return { minSalary: 0, maxSalary: 0, median: 0, currency: 'USD', confidence: 'low', factors: [] };
+    }
+  },
+
+  // --- KEYWORD GAP EXTRACTION (Provision) ---
+  // TODO: Phase 3 — Wire into analyze results for keyword heatmap
+  extractKeywordGaps: async (resumeText: string, jdText: string) => {
+    try {
+      const completion = await groq.chat.completions.create({
+        messages: [
+          {
+            role: 'system',
+            content: `You are an ATS keyword specialist. Compare the resume against the JD.
+Extract all important keywords/skills from the JD, then classify each as "found" or "missing" in the resume.
+
+Return JSON:
+{
+  "found": ["string", ...],
+  "missing": ["string", ...],
+  "criticalMissing": ["string", ...],
+  "matchPercentage": number
+}`
+          },
+          {
+            role: 'user',
+            content: `RESUME:\n${resumeText}\n\nJD:\n${jdText}`
+          }
+        ],
+        model: 'llama-3.3-70b-versatile',
+        response_format: { type: 'json_object' }
+      });
+
+      return JSON.parse(completion.choices[0].message.content || '{}');
+    } catch (error) {
+      console.error('Keyword extraction error:', error);
+      return { found: [], missing: [], criticalMissing: [], matchPercentage: 0 };
+    }
+  },
+
+  // --- LINKEDIN PROFILE OPTIMIZER (Centralized) ---
+  optimizeLinkedIn: async (profileText: string) => {
+    try {
+      const completion = await groq.chat.completions.create({
+        messages: [
+          {
+            role: 'system',
+            content: `You are a LinkedIn Branding Expert. 
+Analyze the user's current profile/summary and provide:
+1. A "Brutal Roast": Point out why it fails to attract recruiters.
+2. An "Elite Headline": A high-impact, keyword-rich headline.
+3. An "Elite Summary": A 3-paragraph summary using the "First Person" and "Action-Oriented" style.
+
+Return JSON:
+{
+  "roast": "string",
+  "headline": "string",
+  "summary": "string"
+}`
+          },
+          {
+            role: 'user',
+            content: `CURRENT PROFILE CONTENT:\n${profileText}`
+          }
+        ],
+        model: 'llama-3.3-70b-versatile',
+        response_format: { type: 'json_object' }
+      });
+
+      return JSON.parse(completion.choices[0].message.content || '{}');
+    } catch (e) {
+      return { roast: 'Analysis failed.', headline: '', summary: '' };
+    }
+  },
 };
+
