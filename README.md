@@ -12,39 +12,39 @@ Below is a step-by-step walkthrough of the app using the screenshots stored in t
 
 1. Onboarding / Role selection
 
-![Onboarding - Role select](./assets/screenshot1.jpeg)
+<img src="./assets/screenshot1.jpeg" alt="Onboarding - Role select" width="360" />
 
 2. Profile setup — "Almost there"
 
-![Profile setup](./assets/screenshot2.jpeg)
+<img src="./assets/screenshot2.jpeg" alt="Profile setup" width="360" />
 
 3. Join / Create account
 
-![Join / Create account](./assets/screenshot3.jpeg)
+<img src="./assets/screenshot3.jpeg" alt="Join / Create account" width="360" />
 
 4. AI Analyzer — target JD input
 
-![AI Analyzer](./assets/screenshot4.jpeg)
+<img src="./assets/screenshot4.jpeg" alt="AI Analyzer" width="360" />
 
 5. Deep Scan action (Run Deep Scan)
 
-![Run Deep Scan](./assets/screenshot5.jpeg)
+<img src="./assets/screenshot5.jpeg" alt="Run Deep Scan" width="360" />
 
 6. Command Center — dashboard overview
 
-![Command Center 1](./assets/screenshot6.jpeg)
+<img src="./assets/screenshot6.jpeg" alt="Command Center 1" width="360" />
 
 7. Command Center — mission intelligence and list
 
-![Command Center 2](./assets/screenshot7.jpeg)
+<img src="./assets/screenshot7.jpeg" alt="Command Center 2" width="360" />
 
 8. Home / Mission Intelligence continued
 
-![Home Mission Intelligence](./assets/screenshot8.jpeg)
+<img src="./assets/screenshot8.jpeg" alt="Home Mission Intelligence" width="360" />
 
 9. Vault — resume vault main
 
-![Vault](./assets/screenshot9.jpeg)
+<img src="./assets/screenshot9.jpeg" alt="Vault" width="360" />
 
 ---
 
