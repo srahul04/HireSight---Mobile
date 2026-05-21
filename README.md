@@ -8,61 +8,45 @@ This repository represents the mobile application for **HireSight**. It features
 
 ## 📸 App Screenshots
 
-Below is a step-by-step walkthrough of the app using the screenshots you provided. Save each screenshot into `assets/images` using the exact filenames shown (or tell me to create them) so the images render in this README.
+Below is a step-by-step walkthrough of the app using the screenshots stored in the `assets/` folder.
 
 1. Onboarding / Role selection
 
-![Onboarding - Role select](./assets/images/step-01-onboarding.png)
+![Onboarding - Role select](./assets/screenshot1.jpeg)
 
 2. Profile setup — "Almost there"
 
-![Profile setup](./assets/images/step-02-profile-setup.png)
+![Profile setup](./assets/screenshot2.jpeg)
 
 3. Join / Create account
 
-![Join / Create account](./assets/images/step-03-join.png)
+![Join / Create account](./assets/screenshot3.jpeg)
 
 4. AI Analyzer — target JD input
 
-![AI Analyzer](./assets/images/step-04-ai-analyzer.png)
+![AI Analyzer](./assets/screenshot4.jpeg)
 
 5. Deep Scan action (Run Deep Scan)
 
-![Run Deep Scan](./assets/images/step-05-deep-scan.png)
+![Run Deep Scan](./assets/screenshot5.jpeg)
 
 6. Command Center — dashboard overview
 
-![Command Center 1](./assets/images/step-06-command-center-1.png)
+![Command Center 1](./assets/screenshot6.jpeg)
 
 7. Command Center — mission intelligence and list
 
-![Command Center 2](./assets/images/step-07-command-center-2.png)
+![Command Center 2](./assets/screenshot7.jpeg)
 
 8. Home / Mission Intelligence continued
 
-![Home Mission Intelligence](./assets/images/step-08-home-mission-intel.png)
+![Home Mission Intelligence](./assets/screenshot8.jpeg)
 
 9. Vault — resume vault main
 
-![Vault](./assets/images/step-09-vault.png)
-
-10. Add Resume modal
-
-![Add Resume Modal](./assets/images/step-10-add-resume-modal.png)
-
-11. Profile / Recruiter header
-
-![Profile header](./assets/images/step-11-profile.png)
-
-12. Terminal Config / Settings
-
-![Terminal Config](./assets/images/step-12-terminal-config.png)
+![Vault](./assets/screenshot9.jpeg)
 
 ---
-
-If you'd like, I can:
-- create these files inside `assets/images` from the attachments you uploaded (you'll need to confirm), or
-- provide a small script you can run to rename/move the uploaded screenshots into `assets/images` with the correct filenames.
 
 
 
