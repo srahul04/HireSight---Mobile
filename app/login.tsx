@@ -13,34 +13,51 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
 
   async function signInWithEmail() {
+    if (!email.trim() || !password.trim()) {
+      Alert.alert('Missing Fields', 'Please enter your email and password.');
+      return;
+    }
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password: password,
+      });
 
-    if (error) {
-      Alert.alert('Login Failed', error.message);
-    } else {
-      // Fetch role from public.users
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: userData, error: roleError } = await supabase
-          .from('users')
-          .select('role')
-          .eq('id', user.id)
-          .single();
+      if (error) {
+        // Show the exact error from Supabase (includes status codes + reason)
+        Alert.alert(
+          'Login Failed',
+          `${error.message}${error.status ? ` (status ${error.status})` : ''}`,
+        );
+      } else {
+        // Fetch role from public.users
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: userData } = await supabase
+            .from('users')
+            .select('role')
+            .eq('id', user.id)
+            .single();
 
-        if (userData?.role === 'recruiter') {
-          router.replace('/(recruiter)/dashboard');
+          if (userData?.role === 'recruiter') {
+            router.replace('/(recruiter)/dashboard');
+          } else {
+            router.replace('/(candidate)/dashboard');
+          }
         } else {
           router.replace('/(candidate)/dashboard');
         }
-      } else {
-        router.replace('/(candidate)/dashboard');
       }
+    } catch (e: any) {
+      // Catches raw network errors (fetch failures, DNS errors, timeouts)
+      Alert.alert(
+        'Network Error',
+        `Could not reach the server.\n\nDetails: ${e?.message ?? String(e)}\n\nCheck your internet connection and ensure the Supabase project is active.`,
+      );
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   return (
